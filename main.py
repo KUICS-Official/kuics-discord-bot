@@ -3,13 +3,15 @@ import json
 import os
 from datetime import datetime, timedelta, timezone
 
+import discord
 from discord import Embed
 from discord.ext import commands
 from dotenv import load_dotenv
 from selenium import webdriver
 
 load_dotenv()
-TOKEN = os.getenv('TOKEN')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+CLIENT_ID = os.getenv('BOT_ID')
 ARCH = os.getenv('ARCH')
 
 webdriver_options = webdriver.ChromeOptions()
@@ -17,7 +19,9 @@ webdriver_options.add_argument('headless')
 executable_path = 'chromedriver.exe' if ARCH.upper(
 ).startswith('WIN') else 'chromedriver'
 
-client = commands.Bot(command_prefix='!', help_command=None)
+intents = discord.Intents.default()
+intents.members = True
+client = commands.Bot(command_prefix='!', help_command=None, intents=intents)
 
 
 @client.event
@@ -86,9 +90,17 @@ async def upcoming(ctx):
 
 @ client.command()
 async def help(ctx):
+    log_message(ctx)
     content = ''
     content += '!upcoming <max_count(default: 1)>'
-    await ctx.send('```' + content + '```')
+    author = ctx.message.author
+    await author.send('```' + content + '```')
+
+
+@ client.event
+async def on_member_join(member):
+    print(f'{member} has joined server')
+    await member.send('KUICS CTF 원정대 디스코드에 오신 것을 환영합니다.\n닉네임을 실명으로 변경해주세요')
 
 
 @ client.event
@@ -97,4 +109,5 @@ async def on_command_error(ctx, error):
     log_error(ctx)
     await ctx.send('사용할 수 없는 명령어입니다.')
 
-client.run(TOKEN)
+
+client.run(BOT_TOKEN)
