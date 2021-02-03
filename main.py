@@ -15,6 +15,7 @@ CLIENT_ID = os.getenv('BOT_ID')
 ARCH = os.getenv('ARCH')
 
 webdriver_options = webdriver.ChromeOptions()
+webdriver_options.add_argument('--no-sandbox')
 webdriver_options.add_argument('headless')
 executable_path = './chromedriver.exe' if ARCH.upper(
 ).startswith('WIN') else './chromedriver'
