@@ -16,8 +16,8 @@ ARCH = os.getenv('ARCH')
 
 webdriver_options = webdriver.ChromeOptions()
 webdriver_options.add_argument('headless')
-executable_path = 'chromedriver.exe' if ARCH.upper(
-).startswith('WIN') else 'chromedriver'
+executable_path = './chromedriver.exe' if ARCH.upper(
+).startswith('WIN') else './chromedriver'
 
 intents = discord.Intents.default()
 intents.members = True
