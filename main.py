@@ -151,7 +151,7 @@ async def help(ctx):
     embed.add_field(name='Upcoming',
                     value='```!upcoming <max_count(default: 1)>```', inline=False)
     embed.add_field(
-        name='Search', value='```!search <count(max: 100> <keyword>```', inline=False)
+        name='Search', value='```!search <count(max: 100, default: 10)> <keyword>```', inline=False)
     embed.set_thumbnail(
         url="https://github.com/BeLeap/kuics-discord-bot/blob/main/KUICS-logo.png?raw=true")
     author = ctx.message.author
