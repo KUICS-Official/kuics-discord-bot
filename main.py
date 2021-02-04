@@ -75,6 +75,8 @@ def search_upcoming_ctf(count, keyword):
         if keyword.upper() in datum['title'].upper():
             result.append(datum)
 
+    return result
+
 
 @ client.command()
 async def upcoming(ctx):
