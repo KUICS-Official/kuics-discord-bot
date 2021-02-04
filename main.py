@@ -93,7 +93,11 @@ async def upcoming(ctx):
                 description = description[:200]
                 description += '...'
             embed = Embed(
-                title=datum['title'], description=description, url=datum['url'])
+                title=datum['title'],
+                description=description,
+                url=datum['url'],
+                color=0x790030
+            )
             embed.set_thumbnail(url=datum['logo'])
             embed.add_field(name='Start', value=datum['start'])
             embed.add_field(name='Finish', value=datum['finish'])
