@@ -69,9 +69,11 @@ def search_upcoming_ctf(count, keyword):
     if count > 100:
         count = 100
     data = upcoming_ctf_list(count)
+
+    result = []
     for datum in data:
         if keyword.upper() in datum['title'].upper():
-            return datum
+            result.append(datum)
 
 
 @ client.command()
@@ -111,26 +113,30 @@ async def search(ctx):
     log_message(ctx)
     content = ctx.message.content
     parsed_message = content.split()
-    datum = []
+    data = []
     try:
-        datum = search_upcoming_ctf(int(parsed_message[1]), parsed_message[2])
+        data = search_upcoming_ctf(int(parsed_message[1]), parsed_message[2])
     except:
-        datum = search_upcoming_ctf(10, parsed_message[1])
+        data = search_upcoming_ctf(10, parsed_message[1])
     finally:
-        description = datum['description']
-        if len(description) > 200:
-            description = description[:200]
-            description += '...'
-        embed = Embed(
-            title=datum['title'],
-            description=description,
-            url=datum['url'],
-            color=0x790030
-        )
-        embed.set_thumbnail(url=datum['logo'])
-        embed.add_field(name='Start', value=datum['start'])
-        embed.add_field(name='Finish', value=datum['finish'])
-        await ctx.send(embed=embed)
+        if data:
+            for datum in data:
+                description = datum['description']
+                if len(description) > 200:
+                    description = description[:200]
+                    description += '...'
+                embed = Embed(
+                    title=datum['title'],
+                    description=description,
+                    url=datum['url'],
+                    color=0x790030
+                )
+                embed.set_thumbnail(url=datum['logo'])
+                embed.add_field(name='Start', value=datum['start'])
+                embed.add_field(name='Finish', value=datum['finish'])
+                await ctx.send(embed=embed)
+        else:
+            await ctx.send('검색결과가 없습니다.')
 
 
 @ client.command()
