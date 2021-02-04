@@ -1,0 +1,7 @@
+version: "3"
+
+services:
+  kuics-bot:
+    build:
+      context: .
+      dockerfile: ./Dockerfile

@@ -15,7 +15,8 @@ CLIENT_ID = os.getenv('BOT_ID')
 ARCH = os.getenv('ARCH')
 
 webdriver_options = webdriver.ChromeOptions()
-webdriver_options.add_argument('--no-sandbox')
+if ARCH.upper().startswith('LIN'):
+    webdriver_options.add_argument('--no-sandbox')
 webdriver_options.add_argument('headless')
 executable_path = './chromedriver.exe' if ARCH.upper(
 ).startswith('WIN') else './chromedriver'
@@ -64,6 +65,15 @@ def upcoming_ctf_list(count):
     return data
 
 
+def search_upcoming_ctf(count, keyword):
+    if count > 100:
+        count = 100
+    data = upcoming_ctf_list(count)
+    for datum in data:
+        if keyword.upper() in datum['title'].upper():
+            return datum
+
+
 @ client.command()
 async def upcoming(ctx):
     log_message(ctx)
@@ -77,12 +87,42 @@ async def upcoming(ctx):
         data = upcoming_ctf_list(1)
 
     for datum in data:
+        if datum:
+            description = datum['description']
+            if len(description) > 200:
+                description = description[:200]
+                description += '...'
+            embed = Embed(
+                title=datum['title'], description=description, url=datum['url'])
+            embed.set_thumbnail(url=datum['logo'])
+            embed.add_field(name='Start', value=datum['start'])
+            embed.add_field(name='Finish', value=datum['finish'])
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send('검색결과가 없습니다.')
+
+
+@ client.command()
+async def search(ctx):
+    log_message(ctx)
+    content = ctx.message.content
+    parsed_message = content.split()
+    datum = []
+    try:
+        datum = search_upcoming_ctf(int(parsed_message[1]), parsed_message[2])
+    except:
+        datum = search_upcoming_ctf(10, parsed_message[1])
+    finally:
         description = datum['description']
         if len(description) > 200:
             description = description[:200]
             description += '...'
         embed = Embed(
-            title=datum['title'], description=description, url=datum['url'])
+            title=datum['title'],
+            description=description,
+            url=datum['url'],
+            color=0x790030
+        )
         embed.set_thumbnail(url=datum['logo'])
         embed.add_field(name='Start', value=datum['start'])
         embed.add_field(name='Finish', value=datum['finish'])
@@ -92,10 +132,17 @@ async def upcoming(ctx):
 @ client.command()
 async def help(ctx):
     log_message(ctx)
-    content = ''
-    content += '!upcoming <max_count(default: 1)>'
+    embed = Embed(
+        title='KUICS Bot 명령어',
+        color=0x790030
+    )
+    embed.add_field(name='Upcoming',
+                    value='```!upcoming <max_count(default: 1)>```', inline=False)
+    embed.add_field(
+        name='Search', value='```!search <count(max: 100> <keyword>```', inline=False)
+    embed.set_thumbnail(url="")
     author = ctx.message.author
-    await author.send('```' + content + '```')
+    await author.send(embed=embed)
 
 
 @ client.event
