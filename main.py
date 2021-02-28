@@ -159,10 +159,10 @@ async def help(ctx):
     await author.send(embed=embed)
 
 
-@ client.event
-async def on_member_join(member):
-    print(f'{member} has joined server')
-    await member.send('KUICS CTF 원정대 디스코드에 오신 것을 환영합니다.\n닉네임을 실명으로 변경해주세요')
+# @ client.event
+# async def on_member_join(member):
+#     print(f'{member} has joined server')
+#     await member.send('KUICS CTF 원정대 디스코드에 오신 것을 환영합니다.\n닉네임을 실명으로 변경해주세요')
 
 
 @ client.event
