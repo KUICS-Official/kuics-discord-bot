@@ -59,7 +59,7 @@ def upcoming_ctf_list(count):
     data = []
     for row in response_dict:
         row_parsed = {'title': row['title'], 'description': row['description'],
-                      'start': datetime.fromisoformat(row['start']).astimezone(timezone(timedelta(hours=9))), 'finish': datetime.fromisoformat(row['finish']).astimezone(timezone(timedelta(hours=9))), 'logo': row['logo'], 'url': row['url']}
+                      'start': datetime.fromisoformat(row['start']).astimezone(timezone(timedelta(hours=9))), 'finish': datetime.fromisoformat(row['finish']).astimezone(timezone(timedelta(hours=9))), 'logo': row['logo'], 'url': row['url'], 'weight': row['weight']}
         data.append(row_parsed)
 
     driver.close()
@@ -106,6 +106,7 @@ async def upcoming(ctx):
             embed.set_thumbnail(url=datum['logo'])
             embed.add_field(name='Start', value=datum['start'])
             embed.add_field(name='Finish', value=datum['finish'])
+            embed.add_field(name='Weight', value=datum['weight'])
             await ctx.send(embed=embed)
         else:
             await ctx.send('검색결과가 없습니다.')
