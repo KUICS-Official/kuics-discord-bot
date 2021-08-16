@@ -2,12 +2,16 @@ import datetime
 import json
 import os
 from datetime import datetime, timedelta, timezone
+from typing import Union
+from discord_slash.utils.manage_commands import create_option
 
-import discord
-from discord import Embed
-from discord.ext import commands
 from dotenv import load_dotenv
 from selenium import webdriver
+
+import discord
+from discord import Client, Embed, Intents
+from discord_slash import SlashCommand, SlashContext
+from discord_slash.model import SlashCommandOptionType
 
 load_dotenv()
 BOT_TOKEN = os.getenv('BOT_TOKEN')
@@ -21,30 +25,8 @@ webdriver_options.add_argument('headless')
 executable_path = './chromedriver.exe' if ARCH.upper(
 ).startswith('WIN') else './chromedriver'
 
-intents = discord.Intents.default()
-intents.members = True
-client = commands.Bot(command_prefix='!', help_command=None, intents=intents)
-
-
-@client.event
-async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('==================================================')
-    await client.change_presence(activity=discord.Game("CTF"))
-
-
-def log_message(ctx):
-    content = ctx.message.content
-    author = ctx.message.author
-    print(content, 'by', author)
-
-
-def log_error(ctx):
-    content = ctx.message.content
-    author = ctx.message.author
-    print('ERROR:', content, 'by', author)
+client = Client(intents=Intents.all())
+slash = SlashCommand(client, sync_commands=True)
 
 
 def upcoming_ctf_list(count):
@@ -79,17 +61,19 @@ def search_upcoming_ctf(count, keyword):
     return result
 
 
-@ client.command()
-async def upcoming(ctx):
-    log_message(ctx)
-    content = ctx.message.content
-    parsed_message = content.split()
-
-    data = []
-    if len(parsed_message) >= 2:
-        data = upcoming_ctf_list(parsed_message[1])
-    else:
-        data = upcoming_ctf_list(1)
+@slash.slash(name="upcoming", description="다가오는 CTF 일정을 최대 {max_count}개 보여줍니다.", options=[
+    create_option(
+        name="max_count",
+        description="최대 개수",
+        option_type=SlashCommandOptionType.INTEGER,
+        required=False,
+    )
+])
+async def upcoming(ctx: SlashContext, max_count: int):
+    count = 1
+    if max_count:
+        count = max_count
+    data = upcoming_ctf_list(count)
 
     for datum in data:
         if datum:
@@ -112,65 +96,52 @@ async def upcoming(ctx):
             await ctx.send('검색결과가 없습니다.')
 
 
-@ client.command()
-async def search(ctx):
-    log_message(ctx)
-    content = ctx.message.content
-    parsed_message = content.split()
-    data = []
-    try:
-        data = search_upcoming_ctf(int(parsed_message[1]), parsed_message[2])
-    except:
-        data = search_upcoming_ctf(10, parsed_message[1])
-    finally:
-        if data:
-            for datum in data:
-                description = datum['description']
-                if len(description) > 200:
-                    description = description[:200]
-                    description += '...'
-                embed = Embed(
-                    title=datum['title'],
-                    description=description,
-                    url=datum['url'],
-                    color=0x790030
-                )
-                embed.set_thumbnail(url=datum['logo'])
-                embed.add_field(name='Start', value=datum['start'])
-                embed.add_field(name='Finish', value=datum['finish'])
-                await ctx.send(embed=embed)
-        else:
-            await ctx.send('검색결과가 없습니다.')
-
-
-@ client.command()
-async def help(ctx):
-    log_message(ctx)
-    embed = Embed(
-        title='KUICS Bot 명령어',
-        color=0x790030
+@slash.slash(name="search", description="다가오는 CTF 일정 {count}개 중 {keyword}를 포함하는 일정을 보여줍니다.", options=[
+    create_option(
+        name="keyword",
+        description="검색어",
+        option_type=SlashCommandOptionType.STRING,
+        required=True,
+    ),
+    create_option(
+        name="count",
+        description="검색 개수",
+        option_type=SlashCommandOptionType.INTEGER,
+        required=False
     )
-    embed.add_field(name='Upcoming',
-                    value='```!upcoming <max_count(default: 1)>```', inline=False)
-    embed.add_field(
-        name='Search', value='```!search <count(max: 100, default: 10)> <keyword>```', inline=False)
-    embed.set_thumbnail(
-        url="https://github.com/BeLeap/kuics-discord-bot/blob/main/KUICS-logo.png?raw=true")
-    author = ctx.message.author
-    await author.send(embed=embed)
+])
+async def search(ctx: SlashContext, **kwargs):
+    keyword = kwargs.get('keyword', '')
+    count = kwargs.get('count', 10)
 
+    data = search_upcoming_ctf(count, keyword)
 
-# @ client.event
-# async def on_member_join(member):
-#     print(f'{member} has joined server')
-#     await member.send('KUICS CTF 원정대 디스코드에 오신 것을 환영합니다.\n닉네임을 실명으로 변경해주세요')
+    if data:
+        for datum in data:
+            description = datum['description']
+            if len(description) > 200:
+                description = description[:200]
+                description += '...'
+            embed = Embed(
+                title=datum['title'],
+                description=description,
+                url=datum['url'],
+                color=0x790030
+            )
+            embed.set_thumbnail(url=datum['logo'])
+            embed.add_field(name='Start', value=datum['start'])
+            embed.add_field(name='Finish', value=datum['finish'])
+            await ctx.send(embed=embed)
+    else:
+        await ctx.send('검색결과가 없습니다.')
 
 
 @ client.event
-async def on_command_error(ctx, error):
-    print(error)
-    log_error(ctx)
-    await ctx.send('사용할 수 없는 명령어입니다.')
-
+async def on_ready():
+    print('Logged in as')
+    print(client.user.name)
+    print(client.user.id)
+    print('==================================================')
+    await client.change_presence(activity=discord.Game("CTF"))
 
 client.run(BOT_TOKEN)
