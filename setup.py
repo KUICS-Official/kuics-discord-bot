@@ -7,5 +7,5 @@ os.system(
 os.system('apt update')
 os.system('apt install google-chrome-stable unzip -y')
 os.system(
-    f'wget https://chromedriver.storage.googleapis.com/88.0.4324.96/chromedriver_linux64.zip')
+    f'https://chromedriver.storage.googleapis.com/92.0.4515.107/chromedriver_linux64.zip')
 os.system('unzip chromedriver_linux64.zip')
