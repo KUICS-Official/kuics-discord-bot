@@ -69,10 +69,8 @@ def search_upcoming_ctf(count, keyword):
         required=False,
     )
 ])
-async def upcoming(ctx: SlashContext, max_count: int):
-    count = 1
-    if max_count:
-        count = max_count
+async def upcoming(ctx: SlashContext, **kwargs):
+    count = kwargs.get('max_count', 1)
     data = upcoming_ctf_list(count)
 
     for datum in data:
