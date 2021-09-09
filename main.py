@@ -21,7 +21,7 @@ ARCH = os.getenv('ARCH')
 webdriver_options = webdriver.ChromeOptions()
 if ARCH.upper().startswith('LIN'):
     webdriver_options.add_argument('--no-sandbox')
-# webdriver_options.add_argument('headless')
+webdriver_options.add_argument('headless')
 executable_path = './chromedriver.exe' if ARCH.upper(
 ).startswith('WIN') else './chromedriver'
 
