@@ -1,4 +1,4 @@
-module kuics.ac.kr/discord-bot
+module kuics.ac.kr/discordbot
 
 go 1.17
 

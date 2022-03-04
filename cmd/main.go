@@ -7,6 +7,7 @@ import (
 	"os/signal"
 
 	"github.com/bwmarrin/discordgo"
+	"kuics.ac.kr/discordbot/internal/ctfapi"
 )
 
 var (
@@ -46,6 +47,8 @@ var (
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
 		"ping": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			ctfapi.GetUpcomingByCount(100)
+
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
