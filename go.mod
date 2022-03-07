@@ -1,3 +1,5 @@
+// +heroku goVersion 1.17.6
+
 module kuics.ac.kr/discordbot
 
 go 1.17
