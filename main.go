@@ -25,6 +25,9 @@ func init() {
 
 func init() {
 	var err error
+	if *BotToken == "" {
+		*BotToken = os.Getenv("DISCORD_BOT_TOKEN")
+	}
 	s, err = discordgo.New("Bot " + *BotToken)
 	if err != nil {
 		panic(err)
