@@ -2,7 +2,13 @@ FROM golang:1.17 as builder
 
 WORKDIR /usr/app
 
+COPY go.mod go.mod
+COPY go.sum go.sum
+
+RUN go mod download
+
 COPY . .
+
 RUN go build
 
 FROM golang:1.17
