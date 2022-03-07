@@ -29,6 +29,13 @@ func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
 		Name:  ctfInfo.Summary.Name,
 		Type:  discordgo.ChannelTypeGuildVoice,
 		Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
+		PermissionOverwrites: []*discordgo.PermissionOverwrite{
+			{
+				ID:    role.ID,
+				Type:  discordgo.PermissionOverwriteTypeRole,
+				Allow: discordgo.PermissionAll,
+			},
+		},
 	})
 
 	start, _ := time.Parse(time.RFC3339, ctfInfo.Summary.Start)
