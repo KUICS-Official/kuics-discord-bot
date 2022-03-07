@@ -133,6 +133,9 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Bot is running. Press CTRL-C to exit.")
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	})
 	http.ListenAndServe(":"+os.Getenv("POST"), nil)
 	<-stop
 
