@@ -10,11 +10,11 @@ import (
 )
 
 func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
-	ctfInfo := ctfapi.GetDetailById(id)
-
 	perm, _ := s.UserChannelPermissions(i.Member.User.ID, i.ChannelID)
 
 	if perm&discordgo.PermissionAdministrator == discordgo.PermissionAdministrator {
+		ctfInfo := ctfapi.GetDetailById(id)
+
 		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
 		})
@@ -32,7 +32,7 @@ func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
 		_, err = s.GuildChannelCreateComplex(i.GuildID, discordgo.GuildChannelCreateData{
 			Name:  ctfInfo.Summary.Name,
 			Type:  discordgo.ChannelTypeGuildText,
-			Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
+			Topic: ctfInfo.Url,
 			PermissionOverwrites: []*discordgo.PermissionOverwrite{
 				{
 					ID:    role.ID,
@@ -46,9 +46,8 @@ func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
 		}
 
 		channel_voice, err := s.GuildChannelCreateComplex(i.GuildID, discordgo.GuildChannelCreateData{
-			Name:  ctfInfo.Summary.Name,
-			Type:  discordgo.ChannelTypeGuildVoice,
-			Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
+			Name: ctfInfo.Summary.Name,
+			Type: discordgo.ChannelTypeGuildVoice,
 			PermissionOverwrites: []*discordgo.PermissionOverwrite{
 				{
 					ID:    role.ID,
