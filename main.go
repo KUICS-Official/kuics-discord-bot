@@ -5,9 +5,10 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
-	"kuics.ac.kr/discordbot/internal/ctfapi"
+	"kuics.ac.kr/discordbot/cmd"
 )
 
 var (
@@ -31,28 +32,56 @@ func init() {
 }
 
 var (
+	integerOptionMinValue = 1.0
+
 	commands = []*discordgo.ApplicationCommand{
 		{
-			Name:        "ping",
-			Description: "A simple ping command.",
+			Name:        "upcoming",
+			Description: "다가오는 CTF 목록을 출력합니다.",
+			Options: []*discordgo.ApplicationCommandOption{
+				{
+					Type:        discordgo.ApplicationCommandOptionInteger,
+					Name:        "limit",
+					Description: "출력할 최대 개수를 지정합니다.",
+					MinValue:    &integerOptionMinValue,
+					MaxValue:    100,
+					Required:    true,
+				},
+			},
+		},
+		{
+			Name:        "notice",
+			Description: "CTF 참여 공지",
 			Options: []*discordgo.ApplicationCommandOption{
 				{
 					Type:        discordgo.ApplicationCommandOptionString,
-					Name:        "foo",
-					Description: "A string option.",
+					Name:        "ctf_id",
+					Description: "CTF ID (from ctftime.org)",
 					Required:    true,
 				},
 			},
 		},
 	}
 	commandHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
-		"ping": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-			ctfapi.GetUpcomingByCount(100)
-
+		"upcoming": cmd.Upcoming,
+		"notice": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			id := i.ApplicationCommandData().Options[0].StringValue()
+			cmd.Notice(s, i, id)
+		},
+	}
+	componentHandlers = map[string]func(s *discordgo.Session, i *discordgo.InteractionCreate){
+		"notice": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			url_slice := strings.Split(i.Message.Embeds[0].URL, "/")
+			id_string := url_slice[len(url_slice)-1]
+			cmd.Notice(s, i, id_string)
+		},
+		"apply": func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+			s.GuildMemberRoleAdd(i.GuildID, i.Member.User.ID, i.Message.Embeds[0].Footer.Text)
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: "Pong!",
+					Content: "`" + i.Message.Embeds[0].Title + "` 참여 신청이 완료되었습니다.",
+					Flags:   1 << 6,
 				},
 			})
 		},
@@ -61,8 +90,15 @@ var (
 
 func init() {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
-			h(s, i)
+		switch i.Type {
+		case discordgo.InteractionApplicationCommand:
+			if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+				h(s, i)
+			}
+		case discordgo.InteractionMessageComponent:
+			if h, ok := componentHandlers[i.MessageComponentData().CustomID]; ok {
+				h(s, i)
+			}
 		}
 	})
 }
@@ -82,6 +118,8 @@ func main() {
 		cmd, err := s.ApplicationCommandCreate(s.State.User.ID, *GuildId, c)
 		if err != nil {
 			log.Fatalf("Cannot create command: %v", err)
+		} else {
+			log.Printf("Registered command: %v", cmd.Name)
 		}
 		registeredCommand[i] = cmd
 	}
@@ -99,6 +137,8 @@ func main() {
 			err := s.ApplicationCommandDelete(s.State.User.ID, *GuildId, c.ID)
 			if err != nil {
 				log.Fatalf("Cannot delete command: %v", err)
+			} else {
+				log.Printf("Removed command: %v", c.Name)
 			}
 		}
 	}
