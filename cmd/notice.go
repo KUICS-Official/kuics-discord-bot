@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -11,49 +12,72 @@ import (
 func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
 	ctfInfo := ctfapi.GetDetailById(id)
 
-	role, _ := s.GuildRoleCreate(i.GuildID)
-	s.GuildRoleEdit(i.GuildID, role.ID, ctfInfo.Summary.Name, 0, false, 0, true)
-	s.GuildChannelCreateComplex(i.GuildID, discordgo.GuildChannelCreateData{
-		Name:  ctfInfo.Summary.Name,
-		Type:  discordgo.ChannelTypeGuildText,
-		Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
-		PermissionOverwrites: []*discordgo.PermissionOverwrite{
-			{
-				ID:    role.ID,
-				Type:  discordgo.PermissionOverwriteTypeRole,
-				Allow: discordgo.PermissionAll,
-			},
-		},
-	})
-	channel_voice, _ := s.GuildChannelCreateComplex(i.GuildID, discordgo.GuildChannelCreateData{
-		Name:  ctfInfo.Summary.Name,
-		Type:  discordgo.ChannelTypeGuildVoice,
-		Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
-		PermissionOverwrites: []*discordgo.PermissionOverwrite{
-			{
-				ID:    role.ID,
-				Type:  discordgo.PermissionOverwriteTypeRole,
-				Allow: discordgo.PermissionAll,
-			},
-		},
-	})
+	perm, _ := s.UserChannelPermissions(i.Member.User.ID, i.ChannelID)
 
-	start, _ := time.Parse(time.RFC3339, ctfInfo.Summary.Start)
-	finish, _ := time.Parse(time.RFC3339, ctfInfo.Summary.Finish)
-	s.GuildScheduledEventCreate(i.GuildID, &discordgo.GuildScheduledEventParams{
-		ChannelID:          channel_voice.ID,
-		Name:               ctfInfo.Summary.Name,
-		Description:        ctfInfo.Description,
-		ScheduledStartTime: &start,
-		ScheduledEndTime:   &finish,
-		PrivacyLevel:       discordgo.GuildScheduledEventPrivacyLevelGuildOnly,
-		Status:             discordgo.GuildScheduledEventStatusActive,
-		EntityType:         discordgo.GuildScheduledEventEntityTypeVoice,
-	})
+	if perm&discordgo.PermissionAdministrator == discordgo.PermissionAdministrator {
+		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+			Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
+		})
 
-	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-		Type: discordgo.InteractionResponseChannelMessageWithSource,
-		Data: &discordgo.InteractionResponseData{
+		role, err := s.GuildRoleCreate(i.GuildID)
+		if err != nil {
+			log.Fatalf("Failed to create role: %v", err)
+		}
+
+		_, err = s.GuildRoleEdit(i.GuildID, role.ID, ctfInfo.Summary.Name, 0, false, 0, true)
+		if err != nil {
+			log.Fatalf("Failed to edit role: %v", err)
+		}
+
+		_, err = s.GuildChannelCreateComplex(i.GuildID, discordgo.GuildChannelCreateData{
+			Name:  ctfInfo.Summary.Name,
+			Type:  discordgo.ChannelTypeGuildText,
+			Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
+			PermissionOverwrites: []*discordgo.PermissionOverwrite{
+				{
+					ID:    role.ID,
+					Type:  discordgo.PermissionOverwriteTypeRole,
+					Allow: discordgo.PermissionAll,
+				},
+			},
+		})
+		if err != nil {
+			log.Fatalf("Failed to create text channel: %v", err)
+		}
+
+		channel_voice, err := s.GuildChannelCreateComplex(i.GuildID, discordgo.GuildChannelCreateData{
+			Name:  ctfInfo.Summary.Name,
+			Type:  discordgo.ChannelTypeGuildVoice,
+			Topic: fmt.Sprintf("%s ~ %s", ctfInfo.Summary.Start, ctfInfo.Summary.Finish),
+			PermissionOverwrites: []*discordgo.PermissionOverwrite{
+				{
+					ID:    role.ID,
+					Type:  discordgo.PermissionOverwriteTypeRole,
+					Allow: discordgo.PermissionAll,
+				},
+			},
+		})
+		if err != nil {
+			log.Fatalf("Failed to create voice channel: %v", err)
+		}
+
+		start, _ := time.Parse(time.RFC3339, ctfInfo.Summary.Start)
+		finish, _ := time.Parse(time.RFC3339, ctfInfo.Summary.Finish)
+		_, err = s.GuildScheduledEventCreate(i.GuildID, &discordgo.GuildScheduledEventParams{
+			ChannelID:          channel_voice.ID,
+			Name:               ctfInfo.Summary.Name,
+			Description:        ctfInfo.Description,
+			ScheduledStartTime: &start,
+			ScheduledEndTime:   &finish,
+			PrivacyLevel:       discordgo.GuildScheduledEventPrivacyLevelGuildOnly,
+			Status:             discordgo.GuildScheduledEventStatusActive,
+			EntityType:         discordgo.GuildScheduledEventEntityTypeVoice,
+		})
+		if err != nil {
+			log.Fatalf("Failed to create event: %v", err)
+		}
+
+		_, err = s.InteractionResponseEdit(s.State.User.ID, i.Interaction, &discordgo.WebhookEdit{
 			Components: []discordgo.MessageComponent{
 				discordgo.ActionsRow{
 					Components: []discordgo.MessageComponent{
@@ -92,6 +116,11 @@ func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
 					},
 				},
 			},
-		},
-	})
+		})
+		if err != nil {
+			log.Fatalf("Failed to send message: %v", err)
+		}
+	} else {
+		log.Println("Permission denied: " + i.Member.User.Username)
+	}
 }
