@@ -15,9 +15,12 @@ func Notice(s *discordgo.Session, i *discordgo.InteractionCreate, id string) {
 	if perm&discordgo.PermissionAdministrator == discordgo.PermissionAdministrator {
 		ctfInfo := ctfapi.GetDetailById(id)
 
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		err := s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 			Type: discordgo.InteractionResponseDeferredChannelMessageWithSource,
 		})
+		if err != nil {
+			log.Fatalf("Failed to ACK: %v", err)
+		}
 
 		role, err := s.GuildRoleCreate(i.GuildID)
 		if err != nil {
