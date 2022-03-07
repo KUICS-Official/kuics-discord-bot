@@ -1,6 +1,0 @@
-build:
-  language:
-    go
-
-run:
-  worker: discordbot
