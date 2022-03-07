@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"strings"
@@ -132,6 +133,7 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
 	log.Println("Bot is running. Press CTRL-C to exit.")
+	http.ListenAndServe(":"+os.Getenv("POST"), nil)
 	<-stop
 
 	if *RemoveCommand {
