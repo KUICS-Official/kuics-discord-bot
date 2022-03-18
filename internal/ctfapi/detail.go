@@ -3,6 +3,7 @@ package ctfapi
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -23,11 +24,13 @@ type CtfInfoDetail struct {
 var client = &http.Client{}
 
 func GetDetailById(id string) CtfInfoDetail {
+	log.Printf("GetDetailById: %s", id)
 	req, _ := http.NewRequest("GET", "https://ctftime.org/api/v1/events/"+id+"/", nil)
 	req.Header.Add("User-Agent", "curl/7.68.0")
 
 	resp, err := client.Do(req)
 	if err != nil {
+		log.Fatalf("GetDetailById: %v", err)
 		return CtfInfoDetail{}
 	}
 	defer resp.Body.Close()
