@@ -1,0 +1,8 @@
+{
+  "name": "kuics-discord-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:kuics-official/kuics-discord-bot",
+  "author": "BeLeap <beleap@beleap.codes>",
+  "license": "MIT"
+}
