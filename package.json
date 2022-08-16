@@ -5,15 +5,19 @@
   "repository": "git@github.com:kuics-official/kuics-discord-bot",
   "author": "BeLeap <beleap@beleap.codes>",
   "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.1"
+  },
   "devDependencies": {
     "@swc-node/register": "^1.5.1",
     "@swc/cli": "^0.1.57",
     "@swc/core": "^1.2.233",
+    "@types/node": "^18.7.5",
     "typescript": "^4.7.4"
   },
   "scripts": {
     "build": "yarn swc ./src -d ./out",
-    "start": "node out",
-    "start:dev": "node -r @swc-node/register src"
+    "start": "NODE_ENV=prod node out",
+    "start:dev": "NODE_ENV=dev node -r @swc-node/register src"
   }
 }
