@@ -8,7 +8,6 @@
   "jsc": {
     "parser": {
       "syntax": "typescript"
-    },
-    "target": "es6"
+    }
   }
 }
