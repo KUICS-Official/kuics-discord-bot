@@ -5,8 +5,8 @@ export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
   await interaction.deferReply();
 
   try {
-    const ctfInfos = await upcoming(interaction.options.getInteger('limit'));
-    await interaction.editReply("CTF 정보를 가져왔습니다.")
+    const ctfInfos = await upcoming(interaction.options.getInteger("limit"));
+    await interaction.editReply("CTF 정보를 가져왔습니다.");
     for (const ctfInfo of ctfInfos) {
       const button: APIActionRowComponent<APIButtonComponentWithCustomId> = {
         components: [
@@ -18,14 +18,14 @@ export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
           },
         ],
         type: ComponentType.ActionRow,
-      }
+      };
 
       await interaction.channel.send({
         embeds: [
           {
             title: ctfInfo.name,
-            description: `${ctfInfo.start} ~ ${ctfInfo.end}`,
-            url: ctfInfo.url,
+            description: `${ctfInfo.start} ~ ${ctfInfo.finish}`,
+            url: ctfInfo.ctftimeUrl,
             fields: [
               {
                 name: "Weight",
@@ -35,7 +35,7 @@ export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
           }
         ],
         components: [button],
-      })
+      });
     }
   } catch (error) {
     await interaction.editReply({
