@@ -25,6 +25,7 @@ const commands = [
         name: "limit",
         description: "가져올 CTF의 최대 개수",
         min_value: 1,
+        required: false,
       },
     ],
   },
