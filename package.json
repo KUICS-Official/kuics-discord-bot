@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "yarn swc ./src -d ./out",
-    "postbuild": "bin/compile && playwright install",
+    "postbuild": "playwright install",
     "start": "NODE_ENV=prod node out",
     "start:dev": "NODE_ENV=dev nodemon -r @swc-node/register src"
   }
