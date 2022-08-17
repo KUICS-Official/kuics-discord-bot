@@ -4,6 +4,7 @@ export class CtfInfo {
   end: string;
   format: string;
   weight: number;
+  url: string;
 
   constructor (
     name: string,
@@ -11,12 +12,14 @@ export class CtfInfo {
     end: string,
     format: string,
     weight: number,
+    url: string,
   ) {
     this.name = name;
     this.start = start;
     this.end = end;
     this.format = format;
     this.weight = weight;
+    this.url = url;
   }
 }
 

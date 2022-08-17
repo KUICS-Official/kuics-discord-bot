@@ -8,10 +8,11 @@ export default async (count: number) => useBrowser(
     const result: CtfInfo[] = [];
 
     for (let idx = 0; idx < count; idx++) {
-      const nameElement = await page.$(`xpath=//html/body/div[3]/table/tbody/tr[${idx + 2}]/td[1]`);
+      const nameElement = await page.$(`xpath=//html/body/div[3]/table/tbody/tr[${idx + 2}]/td[1]/a`);
       const dateRangeRawElement = await page.$(`xpath=//html/body/div[3]/table/tbody/tr[${idx + 2}]/td[2]`);
       const formatElement = await page.$(`xpath=//html/body/div[3]/table/tbody/tr[${idx + 2}]/td[3]`);
       const weightElement = await page.$(`xpath=//html/body/div[3]/table/tbody/tr[${idx + 2}]/td[5]`);
+      const targetUri = await nameElement.getAttribute("href");
 
       const dateRangeSplitted = (await dateRangeRawElement.innerText()).split(' — ');
 
@@ -22,6 +23,7 @@ export default async (count: number) => useBrowser(
           dateRangeSplitted[1],
           await formatElement.innerText(),
           parseFloat(await weightElement.innerText()),
+          `https://ctftime.org${targetUri}`,
         )
       );
     }

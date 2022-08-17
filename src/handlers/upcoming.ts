@@ -10,6 +10,13 @@ export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
       embeds: result.map((it) => ({
         title: it.name,
         description: `${it.start} ~ ${it.end}`,
+        url: it.url,
+        fields: [
+          {
+            name: "Weight",
+            value: it.weight.toString(),
+          }
+        ],
       }))
     });
   } catch (error) {
