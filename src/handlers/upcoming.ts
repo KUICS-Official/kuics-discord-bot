@@ -4,8 +4,14 @@ import upcoming from "../api/upcoming";
 export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
   await interaction.deferReply();
 
-  const result = await upcoming();
-  await interaction.editReply({
-    content: result,
-  });
+  try {
+    const result = await upcoming(interaction.options.getInteger('limit'));
+    await interaction.editReply({
+      content: result,
+    });
+  } catch (error) {
+    await interaction.editReply({
+      content: error.message,
+    });
+  }
 }

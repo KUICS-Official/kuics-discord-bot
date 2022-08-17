@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits, REST, Routes } from 'discord.js';
+import { ApplicationCommand, Client, GatewayIntentBits, REST, Routes } from 'discord.js';
 import dotenv from 'dotenv';
 import path from 'path';
 import startup from './startup';
@@ -13,8 +13,17 @@ const { TOKEN, CLIENT_ID } = process.env;
 
 const commands = [
   {
-    name: 'upcoming',
-    description: '다가오는 CTF 정보를 출력합니다.',
+    name: "upcoming",
+    description: "다가오는 CTF 정보를 출력합니다.",
+    type: 1,
+    options: [
+      {
+        type: 4,
+        name: "limit",
+        description: "가져올 CTF의 최대 개수",
+        min_value: 1,
+      },
+    ],
   },
 ];
 
