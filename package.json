@@ -9,7 +9,7 @@
     "discord.js": "^14.2.0",
     "dotenv": "^16.0.1",
     "node-fetch": "v2",
-    "playwright": "^1.25.0"
+    "playwright-chromium": "^1.25.0"
   },
   "devDependencies": {
     "@swc-node/register": "^1.5.1",
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "yarn swc ./src -d ./out",
-    "postbuild": "playwright install",
+    "postbuild": "bin/compile && playwright install",
     "start": "NODE_ENV=prod node out",
     "start:dev": "NODE_ENV=dev nodemon -r @swc-node/register src"
   }

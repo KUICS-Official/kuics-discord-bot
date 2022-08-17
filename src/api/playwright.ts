@@ -1,4 +1,4 @@
-import { chromium, Page } from "playwright";
+import { chromium, Page } from "playwright-chromium";
 
 export const useBrowser = async <T extends any[], R> (process: (page: Page, ...rest: T) => R, ...rest: T) => {
   const browser = await chromium.launch({ chromiumSandbox: false });

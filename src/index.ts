@@ -1,11 +1,14 @@
-import { ApplicationCommand, Client, GatewayIntentBits, REST, Routes } from 'discord.js';
-import dotenv from 'dotenv';
-import path from 'path';
-import startup from './startup';
+import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
+import dotenv from "dotenv";
+import path from "path";
+import startup from "./startup";
+import { exec } from "child_process";
 
-if (process.env.NODE_ENV === 'dev') {
+exec("yarn playwright install");
+
+if (process.env.NODE_ENV === "dev") {
   dotenv.config({
-    path: path.resolve(process.cwd(), '.env.dev'),
+    path: path.resolve(process.cwd(), ".env.dev"),
   });
 }
 
@@ -27,13 +30,13 @@ const commands = [
   },
 ];
 
-const rest = new REST({ version: '10' }).setToken(TOKEN);
+const rest = new REST({ version: "10" }).setToken(TOKEN);
 
 (async () => {
   try {
-    console.log('reloading applicaton commands');
+    console.log("reloading applicaton commands");
     await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-    console.log('reloaded application commands');
+    console.log("reloaded application commands");
   } catch (error) {
     console.error(error);
   }
