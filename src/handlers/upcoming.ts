@@ -5,7 +5,7 @@ export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
   await interaction.deferReply();
 
   try {
-    const ctfInfos = await upcoming(interaction.options.getInteger("limit"));
+    const ctfInfos = await upcoming(interaction.options.getInteger("limit") ?? 10);
     await interaction.editReply("CTF 정보를 가져왔습니다.");
     for (const ctfInfo of ctfInfos) {
       const button: APIActionRowComponent<APIButtonComponentWithCustomId> = {
