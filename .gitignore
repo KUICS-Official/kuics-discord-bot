@@ -175,3 +175,4 @@ dist-ssr
 *.sw?
 
 .env.dev
+api/
