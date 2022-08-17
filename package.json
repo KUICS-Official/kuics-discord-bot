@@ -21,7 +21,7 @@
     "typescript": "^4.7.4"
   },
   "scripts": {
-    "build": "yarn swc ./src -d ./out",
+    "build": "yarn swc ./src -d ./out && npx playwright install",
     "start": "NODE_ENV=prod node out",
     "start:dev": "NODE_ENV=dev nodemon -r @swc-node/register src"
   }
