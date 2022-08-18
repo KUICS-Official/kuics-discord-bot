@@ -18,18 +18,17 @@ export default async (requestId: string, count: number) => useBrowser(
 
       const dateRangeSplitted = (await dateRangeRawElement.innerText()).split(' — ');
 
-      result.push(
-        new CtfInfo(
-          await nameElement.innerText(),
-          dateRangeSplitted[0],
-          dateRangeSplitted[1],
-          await formatElement.innerText(),
-          parseFloat(await weightElement.innerText()),
-          `https://ctftime.org${targetUri}`,
-        )
-      );
+      const ctfInfo = new CtfInfo(
+        await nameElement.innerText(),
+        dateRangeSplitted[0],
+        dateRangeSplitted[1],
+        await formatElement.innerText(),
+        parseFloat(await weightElement.innerText()),
+        `https://ctftime.org${targetUri}`,
+      )
+      console.debug(`${requestId}:response:${ctfInfo}`)
+      result.push(ctfInfo);
     }
-    console.debug(`${requestId}:response:${result}`)
 
     return result;
   },
