@@ -1,5 +1,5 @@
 import { ButtonStyle, CacheType, ChatInputCommandInteraction, APIButtonComponentWithCustomId, ComponentType, APIActionRowComponent } from "discord.js";
-import upcoming from "../api/upcoming";
+import upcoming from "../../api/upcoming";
 
 export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
   await interaction.deferReply();

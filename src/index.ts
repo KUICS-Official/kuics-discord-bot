@@ -29,6 +29,19 @@ const commands = [
       },
     ],
   },
+  {
+    name: "notice",
+    description: "CTFID로 CTF를 공지합니다.",
+    options: [
+      {
+        type: 4,
+        name: "ctfid",
+        description: "CTFID",
+        min_value: 1,
+        required: true,
+      }
+    ]
+  },
 ];
 
 const rest = new REST({ version: "10" }).setToken(TOKEN);

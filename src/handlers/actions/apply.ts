@@ -1,4 +1,4 @@
-import { ButtonInteraction, CacheType, GuildMemberRoleManager, MessageFlags, MessageFlagsBitField } from "discord.js";
+import { ButtonInteraction, CacheType, GuildMemberRoleManager, MessageFlags } from "discord.js";
 
 export default async (interaction: ButtonInteraction<CacheType>) => {
   const roleId = interaction.message.embeds[0].footer.text;

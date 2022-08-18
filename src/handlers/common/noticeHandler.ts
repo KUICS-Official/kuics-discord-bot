@@ -1,14 +1,8 @@
-import { APIActionRowComponent, APIButtonComponentWithCustomId, ButtonInteraction, ButtonStyle, CacheType, ChannelType, ComponentType, GuildScheduledEventEntityType, GuildScheduledEventPrivacyLevel, OverwriteType, PermissionFlagsBits } from "discord.js";
+import { APIActionRowComponent, APIButtonComponentWithCustomId, ButtonInteraction, ButtonStyle, CacheType, ChannelType, ChatInputCommandInteraction, ComponentType, GuildScheduledEventEntityType, GuildScheduledEventPrivacyLevel, OverwriteType, PermissionFlagsBits } from "discord.js";
+import { CtfInfoDetail } from "../../dto/ctfInfoDetail";
 import fetch from "node-fetch";
-import ctfDetail from "../api/ctfDetail";
 
-export default async (interaction: ButtonInteraction<CacheType>) => {
-  await interaction.deferReply();
-
-  const urlSplited = interaction.message.embeds[0].url.split("/")
-  const ctfId = urlSplited[urlSplited.length - 1];
-  const detail = await ctfDetail(ctfId);
-
+export default async (interaction: ChatInputCommandInteraction<CacheType> | ButtonInteraction<CacheType>, detail: CtfInfoDetail) => {
   const role = await interaction.guild.roles.create({
     name: detail.summary.name,
   });
@@ -52,7 +46,7 @@ export default async (interaction: ButtonInteraction<CacheType>) => {
   });
   let logoImage: Buffer;
   try {
-    logoImage = await (await fetch(detail.logo)).buffer()
+    logoImage = await (await fetch(detail.logo)).buffer();
   } catch (error) {}
 
   await interaction.guild.scheduledEvents.create({

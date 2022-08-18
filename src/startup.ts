@@ -1,7 +1,7 @@
 import { Client } from "discord.js";
-import upcoming from "./handlers/upcoming";
-import notice from "./handlers/notice";
-import apply from "./handlers/apply";
+import upcomingCommand from "./handlers/commands/upcoming";
+import noticeAction from "./handlers/actions/notice";
+import applyAction from "./handlers/actions/apply";
 
 export default (client: Client<boolean>) => {
   client.on("ready", () => {
@@ -12,7 +12,7 @@ export default (client: Client<boolean>) => {
     if (interaction.isChatInputCommand()) {
       switch (interaction.commandName) {
         case "upcoming":
-          await upcoming(interaction);
+          await upcomingCommand(interaction);
           break;
       }
     }
@@ -20,10 +20,10 @@ export default (client: Client<boolean>) => {
     if (interaction.isButton()) {
       switch (interaction.customId) {
         case "notice":
-          await notice(interaction);
+          await noticeAction(interaction);
           break;
         case "apply":
-          await apply(interaction);
+          await applyAction(interaction);
           break;
       }
     }
