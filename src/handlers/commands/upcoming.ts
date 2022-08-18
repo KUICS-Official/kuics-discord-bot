@@ -1,11 +1,11 @@
 import { ButtonStyle, CacheType, ChatInputCommandInteraction, APIButtonComponentWithCustomId, ComponentType, APIActionRowComponent } from "discord.js";
 import upcoming from "../../api/upcoming";
 
-export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
+export default async (requestId: string, interaction: ChatInputCommandInteraction<CacheType>) => {
   await interaction.deferReply();
 
   try {
-    const ctfInfos = await upcoming(interaction.options.getInteger("limit") ?? 10);
+    const ctfInfos = await upcoming(requestId, interaction.options.getInteger("limit") ?? 10);
     await interaction.editReply("CTF 정보를 가져왔습니다.");
     for (const ctfInfo of ctfInfos) {
       const button: APIActionRowComponent<APIButtonComponentWithCustomId> = {
@@ -39,7 +39,7 @@ export default async (interaction: ChatInputCommandInteraction<CacheType>) => {
     }
   } catch (error) {
     await interaction.editReply({
-      content: error.message,
+      content: `${requestId}:${error.message}`,
     });
   }
 }

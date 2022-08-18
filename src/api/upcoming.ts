@@ -1,9 +1,11 @@
 import { useBrowser } from "./playwright";
 import { CtfInfo } from "../dto/ctfInfo";
 
-export default async (count: number) => useBrowser(
-  async (page, count) => {
-    await page.goto("https://ctftime.org/event/list/upcoming")
+export default async (requestId: string, count: number) => useBrowser(
+  async (page, requestId, count) => {
+    const targetUrl = "https://ctftime.org/event/list/upcoming"
+    console.debug(`${requestId}:request:${targetUrl}`);
+    await page.goto(targetUrl);
 
     const result: CtfInfo[] = [];
 
@@ -27,8 +29,10 @@ export default async (count: number) => useBrowser(
         )
       );
     }
+    console.debug(`${requestId}:response:${result}`)
 
     return result;
   },
+  requestId,
   count,
 );
