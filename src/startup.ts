@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 import upcomingCommand from "./handlers/commands/upcoming";
-import noticeCommand from "./handlers/actions/notice";
+import noticeCommand from "./handlers/commands/notice";
 import noticeAction from "./handlers/actions/notice";
 import applyAction from "./handlers/actions/apply";
 
