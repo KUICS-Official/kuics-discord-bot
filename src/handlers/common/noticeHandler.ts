@@ -88,7 +88,7 @@ export default async (interaction: ChatInputCommandInteraction<CacheType> | Butt
           },
           {
             name: "Weight",
-            value: detail.summary.weight.toString(),
+            value: detail.summary.weight.toFixed(2),
           },
           {
             name: "Duration",

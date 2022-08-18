@@ -29,7 +29,7 @@ export default async (requestId: string, interaction: ChatInputCommandInteractio
             fields: [
               {
                 name: "Weight",
-                value: ctfInfo.weight.toString(),
+                value: ctfInfo.weight.toFixed(2),
               }
             ],
           }
