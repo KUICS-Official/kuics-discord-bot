@@ -14,7 +14,7 @@ export default (client: Client<boolean>) => {
   client.on("interactionCreate", async (interaction) => {
     const requestId = ulid();
     
-    console.debug(`${requestId}:interaction-type:${InteractionType[interaction.type]}`);
+    console.debug(`${requestId}:interaction-start:${InteractionType[interaction.type]}`);
 
     if (interaction.isChatInputCommand()) {
       switch (interaction.commandName) {
