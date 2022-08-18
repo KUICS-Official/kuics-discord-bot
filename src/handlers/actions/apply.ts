@@ -1,4 +1,5 @@
 import { ButtonInteraction, CacheType, GuildMemberRoleManager, MessageFlags } from "discord.js";
+import { LoggingMeta } from "../../log/loggingMeta";
 
 export default async (requestId: string, interaction: ButtonInteraction<CacheType>) => {
   try {
@@ -12,7 +13,11 @@ export default async (requestId: string, interaction: ButtonInteraction<CacheTyp
     });
   } catch (error) {
     await interaction.reply({
-      content: `${requestId}:${error.message}`,
+      content: (new LoggingMeta(
+        requestId,
+        "error",
+        error.message,
+      )).toString(),
     });
   }
 }

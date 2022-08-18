@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import path from "path";
 import startup from "./startup";
 import { exec } from "child_process";
+import { LoggingMeta } from "./log/loggingMeta";
+import { log } from "console";
 
 exec("yarn playwright install");
 
@@ -48,11 +50,24 @@ const rest = new REST({ version: "10" }).setToken(TOKEN);
 
 (async () => {
   try {
-    console.log("reloading applicaton commands");
+    (new LoggingMeta(
+      undefined,
+      "startup",
+      "reloading application commands",
+
+    )).log("debug");
     await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-    console.log("reloaded application commands");
+    (new LoggingMeta(
+      undefined,
+      "startup",
+      "realoded application commands",
+    )).log("debug");
   } catch (error) {
-    console.error(error);
+    (new LoggingMeta(
+      undefined,
+      "error",
+      error.message,
+    )).log("error");
   }
 })();
 

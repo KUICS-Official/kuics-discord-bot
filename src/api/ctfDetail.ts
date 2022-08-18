@@ -1,16 +1,25 @@
 import fetch from "node-fetch";
 import { CtfDuration, CtfInfoDetail } from "../dto/ctfInfoDetail";
+import { LoggingMeta } from "../log/loggingMeta";
 
 export default async (requestId: string, ctfId: string) => {
-  const targetUrl = `https://ctftime.org/api/v1/events/${ctfId}/`
-  console.debug(`${requestId}:request:${targetUrl}`);
+  const targetUrl = `https://ctftime.org/api/v1/events/${ctfId}/`;
+  (new LoggingMeta(
+    requestId,
+    "request",
+    targetUrl,
+  )).log("debug");
   const response = await fetch(targetUrl, {
     headers: {
       "User-Agent": "curl/7.68.0",
     },
   });
   const resp = await response.json();
-  console.debug(`${requestId}:response:${resp}`);
+  (new LoggingMeta(
+    requestId,
+    "response",
+    resp,
+  )).log("debug");
 
   const duration = resp["duration"];
   return new CtfInfoDetail(

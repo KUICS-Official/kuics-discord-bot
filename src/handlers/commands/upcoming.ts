@@ -1,5 +1,6 @@
 import { ButtonStyle, CacheType, ChatInputCommandInteraction, APIButtonComponentWithCustomId, ComponentType, APIActionRowComponent } from "discord.js";
 import upcoming from "../../api/upcoming";
+import { LoggingMeta } from "../../log/loggingMeta";
 
 export default async (requestId: string, interaction: ChatInputCommandInteraction<CacheType>) => {
   await interaction.deferReply();
@@ -39,7 +40,11 @@ export default async (requestId: string, interaction: ChatInputCommandInteractio
     }
   } catch (error) {
     await interaction.editReply({
-      content: `${requestId}:${error.message}`,
+      content: (new LoggingMeta(
+        requestId,
+        "error",
+        error.message,
+      )).toString(),
     });
   }
 }

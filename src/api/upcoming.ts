@@ -1,10 +1,15 @@
 import { useBrowser } from "./playwright";
 import { CtfInfo } from "../dto/ctfInfo";
+import { LoggingMeta } from "../log/loggingMeta";
 
 export default async (requestId: string, count: number) => useBrowser(
   async (page, requestId, count) => {
-    const targetUrl = "https://ctftime.org/event/list/upcoming"
-    console.debug(`${requestId}:request:${targetUrl}`);
+    const targetUrl = "https://ctftime.org/event/list/upcoming";
+    (new LoggingMeta(
+      requestId,
+      "request",
+      targetUrl,
+    )).log("debug");
     await page.goto(targetUrl);
 
     const result: CtfInfo[] = [];
@@ -16,7 +21,7 @@ export default async (requestId: string, count: number) => useBrowser(
       const weightElement = await page.$(`xpath=//html/body/div[3]/table/tbody/tr[${idx + 2}]/td[5]`);
       const targetUri = await nameElement.getAttribute("href");
 
-      const dateRangeSplitted = (await dateRangeRawElement.innerText()).split(' — ');
+      const dateRangeSplitted = (await dateRangeRawElement.innerText()).split(" — ");
 
       const ctfInfo = new CtfInfo(
         await nameElement.innerText(),
@@ -25,8 +30,12 @@ export default async (requestId: string, count: number) => useBrowser(
         await formatElement.innerText(),
         parseFloat(await weightElement.innerText()),
         `https://ctftime.org${targetUri}`,
-      )
-      console.debug(`${requestId}:response:${ctfInfo.toString()}`)
+      );
+      (new LoggingMeta(
+          requestId,
+          "response",
+          ctfInfo.toString(),
+      )).log("debug");
       result.push(ctfInfo);
     }
 
