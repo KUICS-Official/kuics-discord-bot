@@ -1,5 +1,6 @@
 import { Client } from "discord.js";
 import upcomingCommand from "./handlers/commands/upcoming";
+import noticeCommand from "./handlers/actions/notice";
 import noticeAction from "./handlers/actions/notice";
 import applyAction from "./handlers/actions/apply";
 
@@ -13,6 +14,9 @@ export default (client: Client<boolean>) => {
       switch (interaction.commandName) {
         case "upcoming":
           await upcomingCommand(interaction);
+          break;
+        case "notice":
+          await noticeCommand(interaction);
           break;
       }
     }
