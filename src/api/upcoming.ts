@@ -26,7 +26,7 @@ export default async (requestId: string, count: number) => useBrowser(
         parseFloat(await weightElement.innerText()),
         `https://ctftime.org${targetUri}`,
       )
-      console.debug(`${requestId}:response:${ctfInfo}`)
+      console.debug(`${requestId}:response:${ctfInfo.toString()}`)
       result.push(ctfInfo);
     }
 

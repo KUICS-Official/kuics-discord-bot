@@ -21,5 +21,9 @@ export class CtfInfo {
     this.weight = weight;
     this.ctftimeUrl = ctftimeUrl;
   }
+
+  toString(): string {
+    return JSON.stringify(this);
+  }
 }
 
