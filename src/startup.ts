@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, InteractionType } from "discord.js";
 import upcomingCommand from "./handlers/commands/upcoming";
 import noticeCommand from "./handlers/commands/notice";
 import noticeAction from "./handlers/actions/notice";
@@ -14,7 +14,7 @@ export default (client: Client<boolean>) => {
   client.on("interactionCreate", async (interaction) => {
     const requestId = ulid();
     
-    console.debug(`${requestId}:interaction-type:${interaction.type}`);
+    console.debug(`${requestId}:interaction-type:${InteractionType[interaction.type]}`);
 
     if (interaction.isChatInputCommand()) {
       switch (interaction.commandName) {
