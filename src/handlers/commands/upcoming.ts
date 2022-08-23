@@ -1,4 +1,4 @@
-import { ButtonStyle, CacheType, ChatInputCommandInteraction, APIButtonComponentWithCustomId, ComponentType, APIActionRowComponent } from "discord.js";
+import { ButtonStyle, CacheType, ChatInputCommandInteraction, APIButtonComponentWithCustomId, ComponentType, APIActionRowComponent, MessageFlags } from "discord.js";
 import upcoming from "../../api/upcoming";
 import { LoggingMeta } from "../../log/loggingMeta";
 
@@ -12,7 +12,7 @@ export default async (requestId: string, interaction: ChatInputCommandInteractio
       const button: APIActionRowComponent<APIButtonComponentWithCustomId> = {
         components: [
           {
-            label: "참가공지",
+            label: "참가공지하기",
             style: ButtonStyle.Primary,
             custom_id: "notice",
             type: ComponentType.Button,

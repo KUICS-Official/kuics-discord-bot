@@ -1,4 +1,4 @@
-import { APIActionRowComponent, APIButtonComponentWithCustomId, ButtonInteraction, ButtonStyle, CacheType, ChannelType, ChatInputCommandInteraction, ComponentType, GuildScheduledEventEntityType, GuildScheduledEventPrivacyLevel, OverwriteType, PermissionFlagsBits } from "discord.js";
+import { APIActionRowComponent, APIButtonComponentWithCustomId, ButtonInteraction, ButtonStyle, CacheType, ChannelType, ChatInputCommandInteraction, ComponentType, GuildScheduledEventEntityType, GuildScheduledEventPrivacyLevel, MessageFlags, OverwriteType, PermissionFlagsBits } from "discord.js";
 import { CtfInfoDetail } from "../../dto/ctfInfoDetail";
 import fetch from "node-fetch";
 
@@ -49,21 +49,28 @@ export default async (interaction: ChatInputCommandInteraction<CacheType> | Butt
     logoImage = await (await fetch(detail.logo)).buffer();
   } catch (error) {}
 
-  await interaction.guild.scheduledEvents.create({
-    name: detail.summary.name,
-    scheduledStartTime: detail.startRaw,
-    scheduledEndTime: detail.finishRaw,
-    privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
-    entityType: GuildScheduledEventEntityType.Voice,
-    description: detail.description,
-    channel: voiceChannel,
-    image: logoImage,
-  })
+  if (detail.startRaw > (new Date())) {
+    await interaction.guild.scheduledEvents.create({
+      name: detail.summary.name,
+      scheduledStartTime: detail.startRaw,
+      scheduledEndTime: detail.finishRaw,
+      privacyLevel: GuildScheduledEventPrivacyLevel.GuildOnly,
+      entityType: GuildScheduledEventEntityType.Voice,
+      description: detail.description,
+      channel: voiceChannel,
+      image: logoImage,
+    })
+  } else {
+    await interaction.channel.send({
+      content: "현재시점보다 이전의 이벤트는 생성할 수 없어요",
+      flags: MessageFlags.Ephemeral,
+    })
+  }
   
   const button: APIActionRowComponent<APIButtonComponentWithCustomId> = {
     components: [
       {
-        label: "참가신청",
+        label: "참가신청하기",
         style: ButtonStyle.Primary,
         custom_id: "apply",
         type: ComponentType.Button,

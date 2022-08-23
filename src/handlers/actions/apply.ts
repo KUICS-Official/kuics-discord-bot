@@ -8,7 +8,7 @@ export default async (requestId: string, interaction: ButtonInteraction<CacheTyp
 
     await (interaction.member.roles as GuildMemberRoleManager).add(roleId);
     await interaction.reply({
-      content: `${ctfTitle} 참여 신청이 완료되었습니다.`,
+      content: `${ctfTitle} 참여 신청이 완료되었어요`,
       flags: MessageFlags.Ephemeral,
     });
   } catch (error) {
