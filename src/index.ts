@@ -2,7 +2,6 @@ import { Client, GatewayIntentBits, REST, Routes } from "discord.js";
 import dotenv from "dotenv";
 import path from "path";
 import startup from "./startup";
-import { exec } from "child_process";
 import { LoggingMeta } from "./log/loggingMeta";
 
 if (process.env.NODE_ENV === "dev") {
