@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "dev") {
   });
 }
 
-const { TOKEN, CLIENT_ID } = process.env;
+const { TOKEN = "", CLIENT_ID = "" } = process.env;
 
 const commands = [
   {
