@@ -12,6 +12,7 @@ FROM node:16.17.0
 WORKDIR /app
 
 COPY --from=builder /app/out out
+COPY --from=builder /app/package.json .
 
 RUN yarn install --production
 

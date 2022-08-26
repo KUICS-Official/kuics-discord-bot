@@ -3,6 +3,9 @@ import dotenv from "dotenv";
 import path from "path";
 import startup from "./startup";
 import { LoggingMeta } from "./log/loggingMeta";
+import { exec } from "child_process";
+
+exec("yarn playwright install");
 
 if (process.env.NODE_ENV === "dev") {
   dotenv.config({
