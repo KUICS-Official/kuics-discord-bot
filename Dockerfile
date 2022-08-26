@@ -6,6 +6,5 @@ COPY . .
 
 RUN yarn
 RUN yarn build
-RUN yarn playwright install
 
 CMD [ "yarn", "start" ]
